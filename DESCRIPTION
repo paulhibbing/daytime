@@ -1,0 +1,16 @@
+Package: daytime
+Type: Package
+Title: Operate on time variables for physical behavior research
+Version: 0.1.0
+Author: Paul R. Hibbing
+Maintainer: Paul R. Hibbing <paulhibbing@gmail.com>
+Description: Crucial functions are to allow conversion of timestamps
+    to numeric time of day (e.g., 0 for midnight and 1439 for 11:59)
+    and subsequent calculation of circular mean and standard deviation.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    lubridate,
+    magrittr
+RoxygenNote: 7.1.1
