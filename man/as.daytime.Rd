@@ -20,7 +20,8 @@ as.daytime(x, ...)
 
 \item{...}{arguments passed to \code{as.POSIXct}}
 
-\item{rational}{logical. Return partial minutes as a decimal addend?}
+\item{rational}{logical. Return partial minutes as a decimal addend (for
+numeric operations) or second value (for \code{strftime} operations)?}
 
 \item{first_min}{value for the first minute of the day. Must be either
 \code{0} (default; minutes coded as 0-1439) or \code{1} (minutes coded as
@@ -32,22 +33,32 @@ an object with class \code{daytime}
 \description{
 Retrieve daytime information from a timestamp
 }
-\note{
+\details{
 If \code{x} is not already POSIX-formatted, coercion will be attempted.
   Arguments can be passed to \code{as.POSIXct} to assist with coercion,
   notably the \code{format} and \code{tz} arguments. Presumably the timezone
   should not matter, except perhaps during a daylight saving transition hour.
   But it is always safest to pass in POSIX-formatted data that you have
   vetted yourself.
+
+  These operations are essentially a thin wrapper around
+  \code{\link{get_minute}}. The difference is intended use. \code{get_minute}
+  is simply for retrieving the numeric values, while this function is for
+  getting a class for which methods can be invoked (e.g. \code{mean}).
 }
 \examples{
 
-Time <- "2000-01-01 00:01:30"
-t1 <- as.POSIXct(Time, "UTC")
-t2 <- as.POSIXct(Time, "EST")
-as.daytime(Time)
+t1_char <- "2000-01-01 00:01:30"
+t1 <- as.POSIXct(t1_char, "UTC")
+
+## Methods exist to give comparable output from character and POSIX inputs
+as.daytime(t1_char)
+as.daytime(t1)
+
+## Settings can be changed to yield a range of values
 as.daytime(t1, TRUE)
-as.daytime(t2, TRUE, 1)
+as.daytime(t1, FALSE, 1)
+as.daytime(t1, TRUE, 1)
 
 ## Beware of silent timezone changes. System will
 ## assume your local timezone unless told otherwise!
