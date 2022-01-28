@@ -69,10 +69,11 @@ hr_to_min <- function(hr) {
 
 attr_apply <- function(x, f) {
   f(x) %>%
-  # as.vector(.) %>%
   structure(
+    .,
     first_min = attr(x, "first_min"),
-    rational = attr(x, "rational")
+    rational = attr(x, "rational"),
+    class = unique(c("daytime", class(.)))
   )
 }
 
