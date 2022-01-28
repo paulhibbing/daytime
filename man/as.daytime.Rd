@@ -5,6 +5,8 @@
 \alias{as.daytime.default}
 \alias{as.daytime.POSIXt}
 \alias{as.daytime.character}
+\alias{as.daytime.circular}
+\alias{as.daytime.daytime}
 \title{Retrieve daytime information from a timestamp}
 \usage{
 as.daytime(x, ...)
@@ -14,6 +16,15 @@ as.daytime(x, ...)
 \method{as.daytime}{POSIXt}(x, rational = FALSE, first_min = 0, ...)
 
 \method{as.daytime}{character}(x, rational = FALSE, first_min = 0, ...)
+
+\method{as.daytime}{circular}(
+  x,
+  rational = attr(x, "rational"),
+  first_min = attr(x, "first_min"),
+  ...
+)
+
+\method{as.daytime}{daytime}(x, ...)
 }
 \arguments{
 \item{x}{a timestamp that inherits from \code{character} or \code{POSIXt}}

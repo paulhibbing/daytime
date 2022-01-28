@@ -70,3 +70,35 @@ as.daytime.POSIXt <- function(x, rational = FALSE, first_min = 0, ...) {
 as.daytime.character <- function(x, rational = FALSE, first_min = 0, ...) {
   as.daytime.POSIXt(x, rational, first_min, ...)
 }
+
+#' @export
+#' @rdname as.daytime
+as.daytime.circular <- function(
+  x, rational = attr(x, "rational"),
+  first_min = attr(x, "first_min"), ...
+) {
+  class(x) %>%
+  append("daytime", 0) %>%
+  unique(.) %>%
+  structure(
+    x, class = .,
+    rational = if (is.null(rational)) {
+      warning("Setting `rational` to FALSE", call. = FALSE)
+      FALSE
+    } else {
+      rational
+    },
+    first_min = if (is.null(first_min)) {
+      warning("Setting `first_min` to 0", call. = FALSE)
+      0
+    } else {
+      first_min
+    }
+  )
+}
+
+#' @export
+#' @rdname as.daytime
+as.daytime.daytime <- function(x, ...) {
+  x
+}

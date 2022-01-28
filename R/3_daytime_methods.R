@@ -23,7 +23,8 @@ mean.daytime <- function(x, ...) {
 
   as_circular(x) %>%
   attr_apply(mean) %>%
-  hr_to_min(.)
+  hr_to_min(.) %>%
+  as.daytime(.)
 
 }
 
@@ -35,7 +36,8 @@ sd.daytime <- function(x, ...) {
   as_circular(x) %>%
   attr_apply(sd) %>% ## gives radians (?)
   {. * (12/pi)} %>% ## convert to hrs
-  hr_to_min(.)
+  hr_to_min(.) %>%
+  as.daytime(.)
 
 }
 
@@ -71,8 +73,8 @@ attr_apply <- function(x, f) {
   f(x) %>%
   structure(
     .,
-    first_min = attr(x, "first_min"),
     rational = attr(x, "rational"),
+    first_min = attr(x, "first_min"),
     class = unique(c("daytime", class(.)))
   )
 }
@@ -119,8 +121,8 @@ as_circular.daytime <- function(x, ...) {
   )} %>%
   structure(
     timestamp = attr(x, "timestamp"),
-    first_min = attr(x, "first_min"),
-    rational = attr(x, "rational")
+    rational = attr(x, "rational"),
+    first_min = attr(x, "first_min")
   )
 
 }

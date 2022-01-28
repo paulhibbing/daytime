@@ -2,6 +2,8 @@
 
 S3method(as.daytime,POSIXt)
 S3method(as.daytime,character)
+S3method(as.daytime,circular)
+S3method(as.daytime,daytime)
 S3method(as.daytime,default)
 S3method(as_circular,daytime)
 S3method(as_circular,default)

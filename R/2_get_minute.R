@@ -61,7 +61,7 @@ get_minute_ts <- function(x, rational = FALSE, first_min = 0, ...) {
   as.numeric("mins") %>%
   {. - ((. - floor(.)) * !rational)} %>%
   {. + first_min} %>%
-  structure(timestamp = x, first_min = first_min, rational = rational)
+  structure(timestamp = x, rational = rational, first_min = first_min)
 
 }
 
@@ -76,7 +76,7 @@ get_minute_num <- function(x, rational = FALSE, first_min = 0, ...) {
     origin = Sys.Date()
   )} %>%
   strftime(., "%H:%M:%S", lubridate::tz(.)) %>%
-  structure(timestamp = x, first_min = first_min, rational = rational)
+  structure(timestamp = x, rational = rational, first_min = first_min)
 
 }
 
