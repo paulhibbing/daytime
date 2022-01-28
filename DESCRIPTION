@@ -1,7 +1,7 @@
 Package: daytime
 Type: Package
 Title: Operate on time variables for physical behavior research
-Version: 0.1.0
+Version: 0.1.0.9000
 Author: Paul R. Hibbing
 Maintainer: Paul R. Hibbing <paulhibbing@gmail.com>
 Description: Crucial functions are to allow conversion of timestamps
@@ -11,6 +11,12 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
+    circular,
+    data.table,
     lubridate,
-    magrittr
+    magrittr,
+    PAutilities,
+    stats
+Remotes:
+    paulhibbing/PAutilities
 RoxygenNote: 7.1.1
