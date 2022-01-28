@@ -22,8 +22,9 @@ Methods for class \code{daytime}
 
 Time <- as.daytime(Sys.time()+rnorm(100, 2*1440, 2*60), TRUE)
 
-mean(Time)
-sd(Time)
+## Wrap in `as.numeric` for better printing
+as.numeric(mean(Time))
+as.numeric(sd(Time))
 
 ## Compare
 mean(as.numeric(Time))

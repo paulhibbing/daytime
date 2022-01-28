@@ -10,8 +10,9 @@
 #'
 #' Time <- as.daytime(Sys.time()+rnorm(100, 2*1440, 2*60), TRUE)
 #'
-#' mean(Time)
-#' sd(Time)
+#' ## Wrap in `as.numeric` for better printing
+#' as.numeric(mean(Time))
+#' as.numeric(sd(Time))
 #'
 #' ## Compare
 #' mean(as.numeric(Time))
@@ -32,7 +33,8 @@ mean.daytime <- function(x, ...) {
 sd.daytime <- function(x, ...) {
 
   as_circular(x) %>%
-  attr_apply(sd) %>%
+  attr_apply(sd) %>% ## gives radians (?)
+  {. * (12/pi)} %>% ## convert to hrs
   hr_to_min(.)
 
 }
@@ -66,9 +68,9 @@ hr_to_min <- function(hr) {
 }
 
 attr_apply <- function(x, f) {
+  f(x) %>%
+  # as.vector(.) %>%
   structure(
-    f(x),
-    # timestamp = attr(x, "timestamp"),
     first_min = attr(x, "first_min"),
     rational = attr(x, "rational")
   )
