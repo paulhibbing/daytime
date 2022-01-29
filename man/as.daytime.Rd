@@ -24,7 +24,12 @@ as.daytime(x, ...)
   ...
 )
 
-\method{as.daytime}{daytime}(x, ...)
+\method{as.daytime}{daytime}(
+  x,
+  rational = attr(x, "rational"),
+  first_min = attr(x, "first_min"),
+  ...
+)
 }
 \arguments{
 \item{x}{a timestamp that inherits from \code{character} or \code{POSIXt}}

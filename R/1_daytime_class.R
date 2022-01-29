@@ -1,3 +1,5 @@
+# Generic -----------------------------------------------------------------
+
 #' Retrieve daytime information from a timestamp
 #'
 #' @param x a timestamp that inherits from \code{character} or \code{POSIXt}
@@ -48,6 +50,8 @@ as.daytime <- function(x, ...) {
   UseMethod("as.daytime", x)
 }
 
+# Methods -----------------------------------------------------------------
+
 #' @export
 #' @rdname as.daytime
 as.daytime.default <- function(x, ...) {
@@ -62,7 +66,7 @@ as.daytime.default <- function(x, ...) {
 #' @rdname as.daytime
 as.daytime.POSIXt <- function(x, rational = FALSE, first_min = 0, ...) {
   get_minute(x, rational, first_min, ...) %>%
-  structure(., class = append(class(.), "daytime", 0))
+  structure_daytime(rational, first_min)
 }
 
 #' @export
@@ -77,6 +81,28 @@ as.daytime.circular <- function(
   x, rational = attr(x, "rational"),
   first_min = attr(x, "first_min"), ...
 ) {
+  if (attr(x, "circularp")$units != "hours") stop(
+    "Expecting circular object with units==\"hours\""
+  )
+  if (any(x < 0 | x >= 1441)) stop(
+    "Expecting circular object with all values in the interval [0,1441)"
+  )
+  structure_daytime(x, rational, first_min)
+}
+
+#' @export
+#' @rdname as.daytime
+as.daytime.daytime <- function(
+  x, rational = attr(x, "rational"),
+  first_min = attr(x, "first_min"), ...
+) {
+  structure_daytime(x, rational, first_min)
+}
+
+# Helper(s) ---------------------------------------------------------------
+
+structure_daytime <- function(x, rational, first_min) {
+
   class(x) %>%
   append("daytime", 0) %>%
   unique(.) %>%
@@ -94,11 +120,10 @@ as.daytime.circular <- function(
     } else {
       first_min
     }
-  )
-}
+  ) %T>%
+  {stopifnot(
+    is.logical(attr(., "rational")),
+    attr(., "first_min") %in% 0:1
+  )}
 
-#' @export
-#' @rdname as.daytime
-as.daytime.daytime <- function(x, ...) {
-  x
 }

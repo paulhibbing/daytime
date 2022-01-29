@@ -122,7 +122,7 @@ check_time_num <- function(x, first_min) {
     stop(
       "Found time values outside the expected range of [",
       first_min, ",", first_min+1440, ")\nPlease recalculate",
-      " (perhaps using `%%`, with caution) and try again"
+      " (perhaps using `x%%1440`, with caution) and try again"
     )
   }
 

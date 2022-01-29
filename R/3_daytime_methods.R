@@ -23,8 +23,7 @@ mean.daytime <- function(x, ...) {
 
   as_circular(x) %>%
   attr_apply(mean) %>%
-  hr_to_min(.) %>%
-  as.daytime(.)
+  hr_to_min(.)
 
 }
 
@@ -36,8 +35,7 @@ sd.daytime <- function(x, ...) {
   as_circular(x) %>%
   attr_apply(sd) %>% ## gives radians (?)
   {. * (12/pi)} %>% ## convert to hrs
-  hr_to_min(.) %>%
-  as.daytime(.)
+  hr_to_min(.)
 
 }
 
@@ -97,16 +95,22 @@ as_circular.default <- function(x, ...) {
 #' @export
 as_circular.daytime <- function(x, ...) {
 
+  if (inherits(x, "circular")) {
+    return(structure(
+      x, class = unique(c("circular", class(x)))
+    ))
+  }
+
   if (attr(x, "first_min") == 0) {
     x %<>% {. + 1}
   }
 
-  out_of_range <- !data.table::inrange(x, 0, 1440)
+  out_of_range <- !data.table::inrange(x, 1, 1440)
   if (any(out_of_range)) {
     stopifnot(attr(x, "rational"))
     warning(
       "Detected ", sum(out_of_range), " element(s) of `x` that",
-      " fall outside the expected range of [0,1440].\nThey will be",
+      " fall outside the expected range of [1,1440].\nThey will be",
       " rounded into that range. Avoid this warning by setting",
       " `rational=FALSE`\nin the original call to `as.daytime`",
       call. = FALSE
@@ -114,7 +118,7 @@ as_circular.daytime <- function(x, ...) {
 
   }
 
-  pmax(x, 0) %>%
+  pmax(x, 1) %>%
   pmin(1440) %>%
   {circular::circular(
     ./60, units = "hours", template = "clock24"
