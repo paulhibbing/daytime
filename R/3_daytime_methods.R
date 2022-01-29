@@ -73,7 +73,10 @@ attr_apply <- function(x, f) {
     .,
     rational = attr(x, "rational"),
     first_min = attr(x, "first_min"),
-    class = unique(c("daytime", class(.)))
+    class = unique(c(
+      "daytime",
+      setdiff(class(.), "circular")
+    ))
   )
 }
 
@@ -96,9 +99,15 @@ as_circular.default <- function(x, ...) {
 as_circular.daytime <- function(x, ...) {
 
   if (inherits(x, "circular")) {
-    return(structure(
-      x, class = unique(c("circular", class(x)))
-    ))
+    # return(structure(
+    #   x, class = unique(c("circular", class(x)))
+    # ))
+    stop(
+      "`daytime` object should not also inherit from",
+      " `circular` -- coercion could\nbe hazardous due",
+      " to previous adjustments for `first_min` followed",
+      " by loss of the attribute"
+    )
   }
 
   if (attr(x, "first_min") == 0) {
