@@ -21,13 +21,9 @@ check_time.numeric <- function(x, rational = attr(x, "rational"), ...) {
 
   rational %<>% check_rational(x)
 
-  if (!range_test(x)) stop(
-    "Found time values outside the expected range of [0, 1439)",
-    "\nPlease recalculate (perhaps using `x%%1440`, with caution)",
-    " and try again", call. = FALSE
-  )
-
-  structure(x, rational = rational)
+  {rational + 1} %>%
+  switch(floor(x), x) %>%
+  structure(rational = rational)
 
 }
 
@@ -40,11 +36,5 @@ check_time.integer <- function(x, ...) {
 
 #' @export
 check_time.circular <- function( x, rational = attr(x, "rational"), ...) {
-
-  rational %<>% check_rational(x)
-
-  {rational + 1} %>%
-  switch(floor(x*60), x*60) %>%
-  check_time.numeric(rational)
-
+  check_time.numeric(x*60, rational)
 }

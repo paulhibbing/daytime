@@ -22,11 +22,11 @@
 #'
 #' @examples
 #'
-#' t1_char <- "2000-01-01 00:01:30"
-#' t1 <- as.POSIXct(t1_char, "UTC")
+#' t1_char <- "00:01:30"
+#' t1 <- as.POSIXct(t1_char, "UTC", format = "%H:%M:%S")
 #'
 #' ## Methods exist to give comparable output from character and POSIX inputs
-#' as_daytime(t1_char)
+#' as_daytime(t1_char, format = "%H:%M:%S")
 #' as_daytime(t1)
 #'
 #' as_daytime(t1, TRUE)
@@ -70,9 +70,9 @@ as_daytime.circular <- function(x, rational = attr(x, "rational"), ...) {
     "Expecting circular object with units==\"hours\""
   )
 
-  if (!range_test(x, lower = 0/60, upper = 1441/60)) stop(
+  if (any(!range_examine(x, 0, 24))) stop(
     "Expecting circular object with all values",
-    " in the interval [0/60, 1441/60)"
+    " in the interval [0, 24)"
   )
 
   warning(

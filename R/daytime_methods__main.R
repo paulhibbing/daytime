@@ -1,5 +1,3 @@
-# Methods -----------------------------------------------------------------
-
 #' Methods for class \code{daytime}
 #'
 #' @param x a daytime object
@@ -8,7 +6,9 @@
 #' @export
 #' @examples
 #'
-#' Time <- as_daytime(Sys.time()+rnorm(100, 2*1440, 2*60), TRUE)
+#' Time <- as_daytime(
+#'   Sys.time()+rnorm(100, 2*1440, 12*60), TRUE
+#' )
 #'
 #' ## Wrap in `as.numeric` for better printing
 #' as.numeric(mean(Time))
@@ -17,6 +17,7 @@
 #' ## Compare
 #' mean(as.numeric(Time))
 #' sd(as.numeric(Time))
+#' PAutilities::mean_sd(Time)
 #'
 #' @name daytime_methods
 mean.daytime <- function(x, ...) {
@@ -56,5 +57,26 @@ mean_sd.daytime <- function(
     )
   }) %>%
   {if (give_df) . else .$sum_string}
+
+}
+
+#' Test if an object belongs to \code{daytime} class
+#'
+#' @param x object to test
+#' @param ... unused.
+#'
+#' @export
+#'
+#' @examples
+#' x <- as_daytime(Sys.time(), FALSE)
+#' is.daytime(x)
+is.daytime <- function(x, ...) {
+
+  all(
+    inherits(x, "daytime", TRUE) == 1,
+    !is.null(attr(x, "x")),
+    isTRUE(is.logical(attr(x, "rational"))),
+    range_test(x, 0, 1439)
+  )
 
 }

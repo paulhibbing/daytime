@@ -31,16 +31,15 @@ as_circular.daytime <- function(x, ...) {
     " `circular`.\nThere could be some coercion hazards"
   )
 
-
-
-  pmax(x, 0) %>%
-  pmin(1439) %>%
-  {circular::circular(
-    ./60, units = "hours", template = "clock24"
-  )} %>%
+  circular::circular(x/60, units = "hours", template = "clock24") %>%
   structure(
-    x = attr(x, "x"),
+    x = switch(
+      attr(x, "rational") + 1,
+      if (is.numeric(attr(x, "x"))) floor(attr(x, "x")) else attr(x, "x"),
+      attr(x, "x")
+    ),
     rational = attr(x, "rational")
-  )
+  ) %T>%
+  {stopifnot(range_test(., 0, 24, rational_adjust = FALSE))}
 
 }

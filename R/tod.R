@@ -18,15 +18,13 @@
 #'
 #' @examples
 #' x <- Sys.time()
-#' y <- as_daytime(x)
 #'
-#' tod(x)
-#' tod(y)
-#' tod(x, rational = TRUE)
+#' tod(x, FALSE)
+#' tod(x, TRUE)
 #'
-#' tod(0)
-#' tod(720)
-#' tod(1440.9, 1, TRUE)
+#' tod(0, FALSE)
+#' tod(720, FALSE)
+#' tod(1439.999, TRUE)
 tod <- function(x, ...) {
   UseMethod("tod", x)
 }
@@ -35,9 +33,10 @@ tod <- function(x, ...) {
 
 #' @export
 #' @rdname tod
-tod.default <- function(x, rational = FALSE, ...) {
+tod.default <- function(x, rational = attr(x, "rational"), ...) {
 
-  as_daytime(x, rational, ...) %>%
+  check_rational(rational, x) %>%
+  as_daytime(x, ., ...) %>%
   tod.daytime(.)
 
 }
@@ -54,16 +53,18 @@ tod.daytime <- function(x, rational = attr(x, "rational"), ...) {
     lubridate::tz(Sys.Date()),
     origin = Sys.Date()
   )} %>%
-  tod.POSIXt(., attr(., "rational"))
+  strf_tod(., x, attr(., "rational")) %>%
+  structure(x = attr(x, "x"), rational = attr(x, "rational"))
 
 }
 
-#' @export
-#' @rdname tod
-tod.POSIXt <- function(x, rational = FALSE, ...) {
+# Helper ------------------------------------------------------------------
 
-  lubridate::tz(x) %>%
-  strftime(x, switch(rational + 1, "%H:%M:00", "%H:%M:%S"), .) %>%
-  structure(., x = x, rational = rational)
+strf_tod <- function(new_x, x, rational) {
+
+  stopifnot(inherits(new_x, "POSIXt"))
+
+  lubridate::tz(new_x) %>%
+  strftime(new_x, switch(rational + 1, "%H:%M:00", "%H:%M:%S"), .)
 
 }
