@@ -5,8 +5,6 @@
 #' @param x value from which to determine the minute of day value; typically
 #'   inherits from \code{character} or \code{POSIXt}, but methods are available
 #'   for \code{circular} and \code{numeric} as well
-#' @param first_min value for the first minute of the day. Must be either
-#'   \code{0} (minutes coded as 0-1439) or \code{1} (minutes coded as 1-1440)
 #' @param rational logical. If \code{FALSE}, values are rounded down to the
 #'   nearest whole minute; if \code{TRUE}, real-numbered values are returned
 #'   with the decimal portions reflecting seconds
@@ -31,10 +29,7 @@
 #' as_daytime(t1_char)
 #' as_daytime(t1)
 #'
-#' ## Settings can be changed to yield a range of values
-#' as_daytime(t1, 0, TRUE)
-#' as_daytime(t1, 1, FALSE)
-#' as_daytime(t1, 1, TRUE)
+#' as_daytime(t1, TRUE)
 #'
 #' ## Beware of silent timezone changes. System will
 #' ## assume your local timezone unless told otherwise!
@@ -51,32 +46,25 @@ as_daytime <- function(x, ...) {
 
 #' @export
 #' @rdname as_daytime
-as_daytime.POSIXt <- function(x, first_min = 0, rational = FALSE, ...) {
+as_daytime.POSIXt <- function(x, rational = FALSE, ...) {
   check_time(x, ...) %>%
   {. - lubridate::floor_date(., "days")} %>%
   as.numeric("mins") %>%
   {. - ((. - floor(.)) * !rational)} %>%
-  {. + first_min} %>%
-  structure_daytime(., x, first_min, rational)
+  structure_daytime(., x, rational)
 }
 
 
 #' @export
 #' @rdname as_daytime
-as_daytime.numeric <- function(
-  x, first_min = attr(x, "first_min"),
-  rational = attr(x, "rational"), ...
-) {
-  check_time(x, first_min, rational) %>%
+as_daytime.numeric <- function(x, rational = attr(x, "rational"), ...) {
+  check_time(x, rational) %>%
   structure_daytime(., x)
 }
 
 #' @export
 #' @rdname as_daytime
-as_daytime.circular <- function(
-  x, first_min = attr(x, "first_min"),
-  rational = attr(x, "rational"), ...
-) {
+as_daytime.circular <- function(x, rational = attr(x, "rational"), ...) {
 
   if (attr(x, "circularp")$units != "hours") stop(
     "Expecting circular object with units==\"hours\""
@@ -92,7 +80,7 @@ as_daytime.circular <- function(
     call. = FALSE
   )
 
-  check_time(x, first_min, rational) %>%
+  check_time(x, rational) %>%
   structure(
     circularp = NULL,
     class = setdiff(class(.), "circular")
@@ -105,12 +93,12 @@ as_daytime.circular <- function(
 
 #' @export
 #' @rdname as_daytime
-as_daytime.character <- function(x, first_min = 0, rational = FALSE, ...) {
-  as_daytime.POSIXt(x, first_min, rational, ...)
+as_daytime.character <- function(x, rational = FALSE, ...) {
+  as_daytime.POSIXt(x, rational, ...)
 }
 
 #' @export
 #' @rdname as_daytime
-as_daytime.integer <- function(x, first_min = attr(x, "first_min"), ...) {
-  as_daytime.numeric(x, first_min, FALSE)
+as_daytime.integer <- function(x, ...) {
+  as_daytime.numeric(x, FALSE)
 }

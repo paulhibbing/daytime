@@ -29,8 +29,7 @@
   }
 
   structure_daytime <- function(
-    new_x, x, first_min = attr(new_x, "first_min"),
-    rational = attr(new_x, "rational")
+    new_x, x,  rational = attr(new_x, "rational")
   ) {
 
     class(new_x) %>%
@@ -38,12 +37,6 @@
     unique(.) %>%
     structure(
       new_x, x = drop_daytime(x), class = .,
-      first_min = if (is.null(first_min)) {
-        warning("Setting `first_min` to 0", call. = FALSE)
-        0
-      } else {
-        first_min
-      },
       rational = if (is.null(rational)) {
         warning("Setting `rational` to FALSE", call. = FALSE)
         FALSE
@@ -51,7 +44,8 @@
         rational
       }
     ) %>%
-    attr_order(.)
+    attr_order(.) %T>%
+    {stopifnot(is.daytime(.))}
 
   }
 
@@ -61,7 +55,7 @@
       x
     } else {
       x %<>% structure(
-        x = NULL, first_min = NULL, rational = NULL,
+        x = NULL, rational = NULL,
         class = setdiff(class(x), "daytime")
       )
       attributes(x) %<>% {c(
@@ -77,7 +71,7 @@
     stopifnot(is.daytime(x))
     a <- attributes(x)
     attributes(x) <-
-      c("x", "first_min", "rational", "class") %>%
+      c("x", "rational", "class") %>%
       {c(setdiff(names(a), .), .)} %>%
       a[.]
     x
@@ -90,7 +84,6 @@
     structure(
       .,
       rational = attr(x, "rational"),
-      first_min = attr(x, "first_min"),
       class = unique(c(
         "daytime",
         setdiff(class(.), "circular")
@@ -107,24 +100,62 @@
 # Misc --------------------------------------------------------------------
 
   is.daytime <- function(x, ...) {
-    all(
-      inherits(x, "daytime", TRUE) == 1,
-      !is.null(attr(x, "x")),
-      isTRUE(is.logical(attr(x, "rational"))),
-      isTRUE(attr(x, "first_min") %in% 0:1)
-    )
+
+    #* Test elements
+
+      ok <- all(
+        inherits(x, "daytime", TRUE) == 1,
+        !is.null(attr(x, "x")),
+        isTRUE(is.logical(attr(x, "rational")))
+      )
+
+    #* Test range
+
+      upper <- 1439 + attr(x, "rational")
+      inc_upper <- !attr(x, "rational")
+
+      values_in_range <- range_test(x, 0, upper, TRUE, inc_upper)
+
+      range_label <- paste0(
+        "[0, ", upper, switch(inc_upper+1, ")", "]")
+      )
+
+      if (any(!values_in_range)) {
+
+        stop(
+          "Detected", sum(!values_in_range), " element(s) of `x` that",
+          " fall outside the expected range of ", range_label,  ".",
+          call. = FALSE
+        )
+
+      }
+
+    #* Finish
+
+      ok
+
   }
 
   range_test <- function(
-    x, first_min, lower = first_min, upper = first_min + 1440
+    x, lower = 0, upper = 1440,
+    inc_lower = TRUE, inc_upper = FALSE
   ) {
 
-    if (!missing(first_min)) stopifnot(
-      first_min %in% 0:1
-    )
+    x %>%
+    stats::na.omit(.) %>%
+    {
+      range_fun(
+        ., lower, inc_lower,
+        base::`>=`, base::`>`
+      ) &
+      range_fun(
+        ., upper, inc_upper,
+        base::`<=`, base::`<`
+      )
+    }
 
-    stats::na.omit(x) %>%
-    {. >= lower & . < upper} %>%
-    all(.)
+  }
 
+  range_fun <- function(x, limit, include_limit, include_fun, exclude_fun) {
+    if (include_limit) include_fun(x, limit) else exclude_fun(x, limit)
   }

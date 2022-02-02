@@ -9,20 +9,17 @@
 \usage{
 tod(x, ...)
 
-\method{tod}{default}(x, first_min = 0, rational = FALSE, ...)
+\method{tod}{default}(x, rational = FALSE, ...)
 
-\method{tod}{daytime}(x, first_min = attr(x, "first_min"), rational = attr(x, "rational"), ...)
+\method{tod}{daytime}(x, rational = attr(x, "rational"), ...)
 
-\method{tod}{POSIXt}(x, first_min = NA, rational = FALSE, ...)
+\method{tod}{POSIXt}(x, rational = FALSE, ...)
 }
 \arguments{
 \item{x}{a \code{daytime} or \code{POSIXt} object, or an object that can be
 cast to \code{daytime}}
 
 \item{...}{arguments passed to \code{\link{as_daytime}}.}
-
-\item{first_min}{value for the first minute of the day. Must be either
-\code{0} (minutes coded as 0-1439) or \code{1} (minutes coded as 1-1440)}
 
 \item{rational}{logical. Return partial minutes as a numeric \code{\%S}
 value? The default (\code{rational = FALSE}) will return \code{\%H:\%M:00}

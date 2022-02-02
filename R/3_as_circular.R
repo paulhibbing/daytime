@@ -27,32 +27,11 @@ as_circular.default <- function(x, ...) {
 as_circular.daytime <- function(x, ...) {
 
   if (inherits(x, "circular")) stop(
-    "`daytime` object should not also inherit from",
-    " `circular` -- coercion could\nbe hazardous due",
-    " to previous adjustments for `first_min` followed",
-    " by loss of the attribute"
+    "Behavior is unknown when `daytime` object also inherits from",
+    " `circular`.\nThere could be some coercion hazards"
   )
 
-  if (attr(x, "first_min") == 1) {
-    x %<>% {. - 1}
-  }
 
-  if (!range_test(x, 0)) {
-
-    if (!isTRUE(attr(x, "rational"))) stop(
-      "Unknown reason for failing range_test in as_circular.daytime",
-      call. = FALSE
-    )
-
-    warning(
-      "Detected element(s) of `x` that",
-      " fall outside the expected range of [0,1439].\nThey will be",
-      " rounded into that range. Avoid this warning by setting",
-      " `rational=FALSE`\nin the original call to `as_daytime`",
-      call. = FALSE
-    )
-
-  }
 
   pmax(x, 0) %>%
   pmin(1439) %>%
@@ -61,8 +40,7 @@ as_circular.daytime <- function(x, ...) {
   )} %>%
   structure(
     x = attr(x, "x"),
-    rational = attr(x, "rational"),
-    first_min = attr(x, "first_min")
+    rational = attr(x, "rational")
   )
 
 }

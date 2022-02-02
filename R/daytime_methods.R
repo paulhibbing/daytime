@@ -51,7 +51,7 @@ mean_sd.daytime <- function(
   within({
     sd = switch(units, "min" = sd, "hr" = sd / 60, NULL)
     sum_string = paste0(
-      tod(mean, attr(mean, "rational"), attr(mean, "first_min")),
+      tod(mean, attr(mean, "rational")),
       " \u00B1 ", format(sd, ...)
     )
   }) %>%

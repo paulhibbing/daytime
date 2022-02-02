@@ -4,7 +4,6 @@
 #'
 #' @param x a \code{daytime} or \code{POSIXt} object, or an object that can be
 #'   cast to \code{daytime}
-#' @inheritParams as_daytime
 #' @param rational logical. Return partial minutes as a numeric \code{\%S}
 #'   value? The default (\code{rational = FALSE}) will return \code{\%H:\%M:00}
 #'   format.
@@ -36,38 +35,35 @@ tod <- function(x, ...) {
 
 #' @export
 #' @rdname tod
-tod.default <- function(x, first_min = 0, rational = FALSE, ...) {
+tod.default <- function(x, rational = FALSE, ...) {
 
-  as_daytime(x, first_min, rational, ...) %>%
+  as_daytime(x, rational, ...) %>%
   tod.daytime(.)
 
 }
 
 #' @export
 #' @rdname tod
-tod.daytime <- function(
-  x, first_min = attr(x, "first_min"),
-  rational = attr(x, "rational"), ...
-) {
+tod.daytime <- function(x, rational = attr(x, "rational"), ...) {
 
   {rational + 1} %>%
   switch(floor(x), x) %>%
-  check_time(first_min, rational) %>%
+  check_time(rational) %>%
   {as.POSIXct(
-    (. - attr(., "first_min")) * 60,
+    . * 60,
     lubridate::tz(Sys.Date()),
     origin = Sys.Date()
   )} %>%
-  tod.POSIXt(., attr(., "first_min"), attr(., "rational"))
+  tod.POSIXt(., attr(., "rational"))
 
 }
 
 #' @export
 #' @rdname tod
-tod.POSIXt <- function(x, first_min = NA, rational = FALSE, ...) {
+tod.POSIXt <- function(x, rational = FALSE, ...) {
 
   lubridate::tz(x) %>%
   strftime(x, switch(rational + 1, "%H:%M:00", "%H:%M:%S"), .) %>%
-  structure(., x = x, first_min = first_min, rational = rational)
+  structure(., x = x, rational = rational)
 
 }

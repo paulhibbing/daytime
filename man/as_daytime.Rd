@@ -11,25 +11,15 @@
 \usage{
 as_daytime(x, ...)
 
-\method{as_daytime}{POSIXt}(x, first_min = 0, rational = FALSE, ...)
+\method{as_daytime}{POSIXt}(x, rational = FALSE, ...)
 
-\method{as_daytime}{numeric}(
-  x,
-  first_min = attr(x, "first_min"),
-  rational = attr(x, "rational"),
-  ...
-)
+\method{as_daytime}{numeric}(x, rational = attr(x, "rational"), ...)
 
-\method{as_daytime}{circular}(
-  x,
-  first_min = attr(x, "first_min"),
-  rational = attr(x, "rational"),
-  ...
-)
+\method{as_daytime}{circular}(x, rational = attr(x, "rational"), ...)
 
-\method{as_daytime}{character}(x, first_min = 0, rational = FALSE, ...)
+\method{as_daytime}{character}(x, rational = FALSE, ...)
 
-\method{as_daytime}{integer}(x, first_min = attr(x, "first_min"), ...)
+\method{as_daytime}{integer}(x, ...)
 }
 \arguments{
 \item{x}{value from which to determine the minute of day value; typically
@@ -37,9 +27,6 @@ inherits from \code{character} or \code{POSIXt}, but methods are available
 for \code{circular} and \code{numeric} as well}
 
 \item{...}{arguments passed to \code{as.POSIXct}. See details.}
-
-\item{first_min}{value for the first minute of the day. Must be either
-\code{0} (minutes coded as 0-1439) or \code{1} (minutes coded as 1-1440)}
 
 \item{rational}{logical. If \code{FALSE}, values are rounded down to the
 nearest whole minute; if \code{TRUE}, real-numbered values are returned
@@ -68,10 +55,7 @@ t1 <- as.POSIXct(t1_char, "UTC")
 as_daytime(t1_char)
 as_daytime(t1)
 
-## Settings can be changed to yield a range of values
-as_daytime(t1, 0, TRUE)
-as_daytime(t1, 1, FALSE)
-as_daytime(t1, 1, TRUE)
+as_daytime(t1, TRUE)
 
 ## Beware of silent timezone changes. System will
 ## assume your local timezone unless told otherwise!
