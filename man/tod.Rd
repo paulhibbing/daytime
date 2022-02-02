@@ -4,16 +4,13 @@
 \alias{tod}
 \alias{tod.default}
 \alias{tod.daytime}
-\alias{tod.POSIXt}
 \title{Retrieve time of day in \code{\%H:\%M:\%S} or \code{\%H:\%M:00} format}
 \usage{
 tod(x, ...)
 
-\method{tod}{default}(x, rational = FALSE, ...)
+\method{tod}{default}(x, rational = attr(x, "rational"), ...)
 
 \method{tod}{daytime}(x, rational = attr(x, "rational"), ...)
-
-\method{tod}{POSIXt}(x, rational = FALSE, ...)
 }
 \arguments{
 \item{x}{a \code{daytime} or \code{POSIXt} object, or an object that can be
@@ -38,13 +35,11 @@ For objects that do not inherit from \code{daytime} or
 }
 \examples{
 x <- Sys.time()
-y <- as_daytime(x)
 
-tod(x)
-tod(y)
-tod(x, rational = TRUE)
+tod(x, FALSE)
+tod(x, TRUE)
 
-tod(0)
-tod(720)
-tod(1440.9, 1, TRUE)
+tod(0, FALSE)
+tod(720, FALSE)
+tod(1439.999, TRUE)
 }
