@@ -8,6 +8,8 @@
 #' @param rational logical. If \code{FALSE}, values are rounded down to the
 #'   nearest whole minute; if \code{TRUE}, real-numbered values are returned
 #'   with the decimal portions reflecting seconds
+#' @param warn_circular logical. Issue a warning if class \code{circular} is
+#'   being removed?
 #' @param ... arguments passed to \code{as.POSIXct}. See details.
 #'
 #' @details If \code{x} inherits from \code{character}, casting to \code{POSIXt}
@@ -64,7 +66,9 @@ as_daytime.numeric <- function(x, rational = attr(x, "rational"), ...) {
 
 #' @export
 #' @rdname as_daytime
-as_daytime.circular <- function(x, rational = attr(x, "rational"), ...) {
+as_daytime.circular <- function(
+  x, rational = attr(x, "rational"), warn_circular = TRUE, ...
+) {
 
   if (attr(x, "circularp")$units != "hours") stop(
     "Expecting circular object with units==\"hours\""
@@ -75,16 +79,8 @@ as_daytime.circular <- function(x, rational = attr(x, "rational"), ...) {
     " in the interval [0, 24)"
   )
 
-  warning(
-    "Removing class `circular` for conversion to `daytime`",
-    call. = FALSE
-  )
-
   check_time(x, rational) %>%
-  structure(
-    circularp = NULL,
-    class = setdiff(class(.), "circular")
-  ) %>%
+  drop_circular(warn_circular) %>%
   structure_daytime(., x)
 
 }

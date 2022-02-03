@@ -15,7 +15,7 @@ as_daytime(x, ...)
 
 \method{as_daytime}{numeric}(x, rational = attr(x, "rational"), ...)
 
-\method{as_daytime}{circular}(x, rational = attr(x, "rational"), ...)
+\method{as_daytime}{circular}(x, rational = attr(x, "rational"), warn_circular = TRUE, ...)
 
 \method{as_daytime}{character}(x, rational = FALSE, ...)
 
@@ -31,6 +31,9 @@ for \code{circular} and \code{numeric} as well}
 \item{rational}{logical. If \code{FALSE}, values are rounded down to the
 nearest whole minute; if \code{TRUE}, real-numbered values are returned
 with the decimal portions reflecting seconds}
+
+\item{warn_circular}{logical. Issue a warning if class \code{circular} is
+being removed?}
 }
 \value{
 a \code{daytime} object
