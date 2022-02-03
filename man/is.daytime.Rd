@@ -9,7 +9,7 @@ is.daytime(x, ...)
 \arguments{
 \item{x}{object to test}
 
-\item{...}{unused.}
+\item{...}{arguments passed to \code{\link{range_test}}}
 }
 \description{
 Test if an object belongs to \code{daytime} class

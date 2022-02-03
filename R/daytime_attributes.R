@@ -1,5 +1,6 @@
 structure_daytime <- function(
-  new_x, x,  rational = attr(new_x, "rational")
+  new_x, x,  rational = attr(new_x, "rational"),
+  ...
 ) {
 
   class(new_x) %>%
@@ -14,40 +15,17 @@ structure_daytime <- function(
       rational
     }
   ) %>%
-  attr_order(.) %T>%
-  {stopifnot(is.daytime(.))}
+  attr_order(...) ## Includes a check for is.daytime
 
 }
 
-drop_daytime <- function(x) {
+attr_order <- function(x, ...) {
 
-  if (!inherits(x, "daytime")) {
+  stopifnot(is.daytime(x, ...))
 
-    x
-
-  } else {
-
-    x %<>% structure(
-      x = NULL, rational = NULL,
-      class = setdiff(class(x), "daytime")
-    )
-
-    attributes(x) %<>% {c(
-      .[setdiff(names(.), "class")],
-      class = list(.$class)
-    )}
-
-    x
-
-  }
-
-}
-
-attr_order <- function(x) {
-
-  stopifnot(is.daytime(x))
-
-  a <- attributes(x)
+  a <-
+    attributes(x) %>%
+    .[!duplicated(.)]
 
   attributes(x) <-
     c("x", "rational", "class") %>%

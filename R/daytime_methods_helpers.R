@@ -1,13 +1,6 @@
-attr_apply <- function(x, f) {
+attr_apply <- function(x, f, ...) {
   f(x) %>%
-  structure(
-    .,
-    rational = attr(x, "rational"),
-    class = unique(c(
-      "daytime",
-      setdiff(class(.), "circular")
-    ))
-  )
+  structure_daytime(., x, attr(x, "rational"), ...)
 }
 
 hr_to_min <- function(hr) {

@@ -23,7 +23,16 @@
 mean.daytime <- function(x, ...) {
 
   as_circular(x) %>%
-  attr_apply(mean) %>%
+  attr_apply(
+    mean, lower = -24, upper = 24,
+    inc_lower = FALSE, inc_upper = FALSE,
+    rational_adjust = FALSE
+  ) %>%
+  drop_circular(FALSE) %>%
+  structure(
+    .,
+    x = drop_circular(attr(., "x"), FALSE, TRUE)
+  ) %>%
   hr_to_min(.)
 
 }
@@ -34,8 +43,17 @@ mean.daytime <- function(x, ...) {
 sd.daytime <- function(x, ...) {
 
   as_circular(x) %>%
-  attr_apply(sd) %>% ## gives radians (?)
+  attr_apply(
+    sd, lower = -2*pi, upper = 2*pi,
+    inc_lower = FALSE, inc_upper = FALSE,
+    rational_adjust = FALSE
+  ) %>% ## gives radians (?)
   {. * (12/pi)} %>% ## convert to hrs
+  drop_circular(FALSE) %>%
+  structure(
+    .,
+    x = drop_circular(attr(., "x"), FALSE, TRUE)
+  ) %>%
   hr_to_min(.)
 
 }
@@ -63,7 +81,7 @@ mean_sd.daytime <- function(
 #' Test if an object belongs to \code{daytime} class
 #'
 #' @param x object to test
-#' @param ... unused.
+#' @param ... arguments passed to \code{\link{range_test}}
 #'
 #' @export
 #'
@@ -76,7 +94,43 @@ is.daytime <- function(x, ...) {
     inherits(x, "daytime", TRUE) == 1,
     !is.null(attr(x, "x")),
     isTRUE(is.logical(attr(x, "rational"))),
-    range_test(x, 0, 1439)
+    range_test(x, ...)
   )
 
+}
+
+print.daytime <- function(x, ...) {
+
+  if (circular::is.circular(attr(x, "x"))) {
+    attr(x, "x") %<>% drop_circular(FALSE, TRUE)
+  }
+
+  if (circular::is.circular(x)) {
+    print(x, info = FALSE)
+  } else {
+    print(x, ...)
+  }
+
+}
+
+#' Plot a \code{daytime} object
+#'
+#' @param x a \code{daytime} object
+#' @param ... arguments passed to \code{\link{as_circular}}
+#'
+#' @details \code{x} is first cast as \code{circular}, then forwarded to the
+#'   plot method for \code{circular} objects
+#'
+#' plot(as_daytime(
+#'   seq(
+#'     as.POSIXct(Sys.Date()),
+#'     as.POSIXct(Sys.Date()+1),
+#'     "3 hour"
+#'    )
+#' ))
+#'
+#' @export
+plot.daytime <- function(x, ...) {
+  as_circular(x, ...) %>%
+  plot(.)
 }
