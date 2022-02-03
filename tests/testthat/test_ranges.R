@@ -29,6 +29,13 @@ testthat::test_that("range testing works as expected", {
       c(FALSE, TRUE, FALSE, FALSE)
     ))
 
+    testthat::expect_equal(
+      range_examine(
+        c(-1, NA, NA, 0, NA, 1440, NA, NA, 1441, NA)
+      ),
+      c(FALSE, NA, NA, TRUE, NA, FALSE, NA, NA, FALSE, NA)
+    )
+
   #* Range test on non-daytime input
 
     testthat::expect_error(
@@ -61,6 +68,15 @@ testthat::test_that("range testing works as expected", {
       ),
       "lower is greater than upper; they will be swapped"
     )
+
+    testthat::expect_warning(
+      range_test(c(0, 720, 1439), inc_upper = TRUE),
+      "Skipping rational_adjust \\(no `rational` attribute)"
+    )
+
+    suppressWarnings(testthat::expect_true(
+      range_test(c(0, 720, 1439), inc_upper = TRUE)
+    ))
 
   #* Tests with rational==TRUE
 
