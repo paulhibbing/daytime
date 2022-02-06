@@ -31,4 +31,10 @@ testthat::test_that("as_circular works as expected", {
 
   testthat::expect_s3_class(as_circular(Sys.time(), FALSE), "circular")
 
+  x <- as_daytime(t1, TRUE)
+  x <- c(x, x, x)
+  x <- structure(x, class = c(class(x), "circular"))
+
+  testthat::expect_error(as_circular(x), "Behavior is unknown")
+
 })

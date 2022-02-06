@@ -1,5 +1,15 @@
 testthat::test_that("as_daytime methods work as expected with (generally) `rational = FALSE`", {
 
+  #* `rational` argument
+
+    testthat::expect_true(
+      check_rational(TRUE, circular::circular(20, units = "hours"))
+    )
+
+    testthat::expect_error(
+      check_rational(NA, 85L), "isTRUE\\(is.logical\\(rational)"
+    )
+
   #* Character/POSIXt
 
     t1_char <- "00:01:30"
@@ -63,10 +73,13 @@ testthat::test_that("as_daytime methods work as expected with (generally) `ratio
       "Removing class `circular`"
     )
 
-    suppressWarnings(testthat::expect_equal(
-      as_daytime(circular::circular(1300.5/60, units = "hours"), FALSE),
+    testthat::expect_equal(
+      as_daytime(
+        circular::circular(1300.5/60, units = "hours"),
+        FALSE, FALSE
+      ),
       1300, ignore_attr = TRUE
-    ))
+    )
 
     suppressWarnings(testthat::expect_s3_class(
       as_daytime(circular::circular(1300.5/60, units = "hours"), FALSE),
@@ -129,10 +142,13 @@ testthat::test_that("as_daytime methods work as expected with (generally) `ratio
       "Removing class `circular`"
     )
 
-    suppressWarnings(testthat::expect_equal(
-      as_daytime(circular::circular(1300.5/60, units = "hours"), TRUE),
+    testthat::expect_equal(
+      as_daytime(
+        circular::circular(1300.5/60, units = "hours"),
+        TRUE, FALSE
+      ),
       1300.5, ignore_attr = TRUE
-    ))
+    )
 
     suppressWarnings(testthat::expect_s3_class(
       as_daytime(circular::circular(1300.5/60, units = "hours"), TRUE),
