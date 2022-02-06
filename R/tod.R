@@ -48,11 +48,11 @@ tod.daytime <- function(x, rational = attr(x, "rational"), ...) {
   {rational + 1} %>%
   switch(floor(x), x) %>%
   check_time(rational) %>%
-  {as.POSIXct(
-    . * 60,
+  {structure(as.POSIXct(
+    as.numeric(.) * 60,
     lubridate::tz(Sys.Date()),
     origin = Sys.Date()
-  )} %>%
+  ), rational = attr(., "rational"))} %>%
   strf_tod(., x, attr(., "rational")) %>%
   structure(x = attr(x, "x"), rational = attr(x, "rational"))
 

@@ -21,7 +21,7 @@ Methods for class \code{daytime}
 \examples{
 
 Time <- as_daytime(
-  Sys.time()+rnorm(100, 2*1440, 12*60), TRUE
+  Sys.time()+rnorm(100, 12*60*60, 12*60*60), TRUE
 )
 
 ## Wrap in `as.numeric` for better printing

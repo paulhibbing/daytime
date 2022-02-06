@@ -7,7 +7,7 @@
 #' @examples
 #'
 #' Time <- as_daytime(
-#'   Sys.time()+rnorm(100, 2*1440, 12*60), TRUE
+#'   Sys.time()+rnorm(100, 12*60*60, 12*60*60), TRUE
 #' )
 #'
 #' ## Wrap in `as.numeric` for better printing
@@ -43,6 +43,10 @@ mean.daytime <- function(x, ...) {
 sd.daytime <- function(x, ...) {
 
   as_circular(x) %>%
+  ## `daytime` inheritance leads to `Ops` being invoked undesirably...
+  drop_daytime(.) %>%
+  ## ... but `rational` attribute is still needed for `structure_daytime`
+  structure(., rational = attr(x, "rational")) %>%
   attr_apply(
     sd, lower = -2*pi, upper = 2*pi,
     inc_lower = FALSE, inc_upper = FALSE,
@@ -99,20 +103,6 @@ is.daytime <- function(x, ...) {
 
 }
 
-print.daytime <- function(x, ...) {
-
-  if (circular::is.circular(attr(x, "x"))) {
-    attr(x, "x") %<>% drop_circular(FALSE, TRUE)
-  }
-
-  if (circular::is.circular(x)) {
-    print(x, info = FALSE)
-  } else {
-    print(x, ...)
-  }
-
-}
-
 #' Plot a \code{daytime} object
 #'
 #' @param x a \code{daytime} object
@@ -133,4 +123,57 @@ print.daytime <- function(x, ...) {
 plot.daytime <- function(x, ...) {
   as_circular(x, ...) %>%
   plot(.)
+}
+
+#' @export
+c.daytime <- function(...) {
+
+  obs <-
+    list(...) %T>%
+    {stopifnot(all(sapply(., is.daytime)))}
+
+  rational <-
+    sapply(obs, attr, "rational") %>%
+    unique(.)
+
+  if (length(rational) != 1) {
+    warning("Setting rational to TRUE", call. = FALSE)
+    rational <- TRUE
+  }
+
+  x_classes <-
+    lapply(obs, attr, "x") %>%
+    lapply(class) %>%
+    lapply(gsub, pattern = "^integer$", replacement = "numeric") %>%
+    unique(.)
+
+  if (length(x_classes) != 1) {
+    warning(
+      "Converting all `x` attributes to character for concatenation",
+      call. = FALSE
+    )
+    x <-
+      lapply(obs, attr, "x") %>%
+      lapply(as.character) %>%
+      sapply(paste, collapse = ", ")
+  } else {
+    x <-
+      lapply(obs, attr, "x") %>%
+      do.call(c, .)
+  }
+
+  unlist(obs) %>%
+  structure_daytime(x, rational)
+
+}
+
+#' @export
+print.daytime <- function(x, ...) {
+
+  if (circular::is.circular(attr(x, "x"))) {
+    attr(x, "x") %<>% drop_circular(FALSE, TRUE)
+  }
+
+  NextMethod()
+
 }

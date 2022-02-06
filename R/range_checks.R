@@ -30,7 +30,6 @@ range_examine <- function(
 ) {
 
   if (test_limits) order_limits(lower, upper)
-  # result <- rep(NA, length(x))
 
   x %<>% stats::na.exclude(.)
 
@@ -106,10 +105,8 @@ range_test <- function(
   #* Run the test
 
     values_in_range <-
-      range_examine(
-        x, lower, upper, inc_lower, inc_upper, FALSE
-      ) %>%
-      stats::na.omit(.)
+      stats::na.omit(x) %>%
+      range_examine(lower, upper, inc_lower, inc_upper, FALSE)
 
     if (any(!values_in_range)) {
 
