@@ -7,20 +7,25 @@ check_rational <- function(rational, x) {
       is.logical(attr(x, "rational"))
     )
 
-    if (rational != attr(x, "rational")) warning(
-      "Conflict detected between attr(x, \"rational\") {",
-      attr(x, "rational"), "} and user input {rational = ", rational,
-      "}.\nUser input will be ignored.", call. = FALSE
-    )
+    if (rational != attr(x, "rational")) {
 
-    rational <- attr(x, "rational")
+      rational <- get_rational(rational, x)
+      warning(
+        "Conflict detected between attr(x, \"rational\") {",
+        attr(x, "rational"), "} and user input {rational = ", rational,
+        "}.\nSetting to ", rational, " based on internal testing.",
+        call. = FALSE
+      )
+
+    }
+
 
   } else if (is.null(rational) & !inherits(x, "POSIXt")) {
 
     if (is.integer(x)) {
       rational <- FALSE
     } else {
-      rational <- !isTRUE(all.equal(as.numeric(x), as.integer(x)))
+      rational <- get_rational(rational, x)
       warning("Setting `rational` to ", rational, call. = FALSE)
     }
 
@@ -37,4 +42,11 @@ check_rational <- function(rational, x) {
 
   rational
 
+}
+
+get_rational <- function(rational, x) {
+  if (inherits(x, "POSIXt"))
+    FALSE
+  else
+    !isTRUE(all.equal(as.numeric(x), as.integer(x)))
 }

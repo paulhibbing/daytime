@@ -102,4 +102,11 @@ testthat::test_that("range testing works as expected", {
       "range of \\[300, 319)"
     )
 
+  #* Other settings
+
+    testthat::expect_error(
+      range_test(1450, 2000, 2500, TRUE, FALSE, FALSE),
+      "^Detected 1 element\\(s) of `x`.*of \\[2000, 2500).$"
+    )
+
 })

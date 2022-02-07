@@ -1,15 +1,5 @@
 testthat::test_that("as_daytime methods work as expected with (generally) `rational = FALSE`", {
 
-  #* `rational` argument
-
-    testthat::expect_true(
-      check_rational(TRUE, circular::circular(20, units = "hours"))
-    )
-
-    testthat::expect_error(
-      check_rational(NA, 85L), "isTRUE\\(is.logical\\(rational)"
-    )
-
   #* Character/POSIXt
 
     t1_char <- "00:01:30"
@@ -32,7 +22,10 @@ testthat::test_that("as_daytime methods work as expected with (generally) `ratio
     d3 <- as_daytime(t2, FALSE)
 
     testthat::expect_warning(as_daytime(t2), "^Setting `rational` to TRUE")
+    suppressWarnings(testthat::expect_true(attr(as_daytime(t2), "rational")))
+
     testthat::expect_warning(as_daytime(floor(t2)), "^Setting `rational` to FALSE")
+    suppressWarnings(testthat::expect_false(attr(as_daytime(floor(t2)), "rational")))
 
     suppressWarnings(testthat::expect_equal(as_daytime(t2), 720.5, ignore_attr = TRUE))
     suppressWarnings(testthat::expect_equal(as_daytime(floor(t2)), 720, ignore_attr = TRUE))
@@ -41,6 +34,9 @@ testthat::test_that("as_daytime methods work as expected with (generally) `ratio
     testthat::expect_s3_class(d3, "daytime")
 
     testthat::expect_warning(as_daytime(t2_fake, FALSE), "^Conflict detected")
+    suppressWarnings(testthat::expect_true(
+      attr(as_daytime(t2_fake, FALSE), "rational")
+    ))
     suppressWarnings(testthat::expect_equal(
       as_daytime(t2_fake, FALSE), 720.5, ignore_attr = TRUE
     ))

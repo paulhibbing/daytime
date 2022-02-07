@@ -8,20 +8,17 @@ structure_daytime <- function(
   unique(.) %>%
   structure(
     new_x, x = drop_daytime(x), class = .,
-    rational = if (is.null(rational)) {
-      warning("Setting `rational` to FALSE", call. = FALSE)
-      FALSE
-    } else {
-      rational
-    }
+    rational = check_rational(rational, new_x)
   ) %>%
-  attr_order(...) ## Includes a check for is.daytime
+  attr_order(TRUE, ...)
 
 }
 
-attr_order <- function(x, ...) {
+attr_order <- function(x, test_daytime, ...) {
 
-  stopifnot(is.daytime(x, ...))
+  stopifnot(is.logical(test_daytime), !is.na(test_daytime))
+
+  if (test_daytime) stopifnot(is.daytime(x, ...))
 
   a <-
     attributes(x) %>%

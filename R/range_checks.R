@@ -34,7 +34,7 @@ range_examine <- function(
   x %<>% stats::na.exclude(.)
 
   valid_tests <-
-    x %>%
+    drop_daytime(x) %>%
     {
       range_fun(
         ., lower, inc_lower,

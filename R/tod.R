@@ -45,26 +45,26 @@ tod.default <- function(x, rational = attr(x, "rational"), ...) {
 #' @rdname tod
 tod.daytime <- function(x, rational = attr(x, "rational"), ...) {
 
-  {rational + 1} %>%
-  switch(floor(x), x) %>%
-  check_time(rational) %>%
+  check_time(x, rational) %>%
   {structure(as.POSIXct(
     as.numeric(.) * 60,
     lubridate::tz(Sys.Date()),
     origin = Sys.Date()
   ), rational = attr(., "rational"))} %>%
-  strf_tod(., x, attr(., "rational")) %>%
-  structure(x = attr(x, "x"), rational = attr(x, "rational"))
+  strf_tod(.) %>%
+  structure(x = attr(x, "x")) %>%
+  attr_order(FALSE)
 
 }
 
 # Helper ------------------------------------------------------------------
 
-strf_tod <- function(new_x, x, rational) {
+strf_tod <- function(x, rational = attr(x, "rational")) {
 
-  stopifnot(inherits(new_x, "POSIXt"))
+  stopifnot(inherits(x, "POSIXt"))
 
-  lubridate::tz(new_x) %>%
-  strftime(new_x, switch(rational + 1, "%H:%M:00", "%H:%M:%S"), .)
+  lubridate::tz(x) %>%
+  strftime(x, switch(rational + 1, "%H:%M:00", "%H:%M:%S"), .) %>%
+  structure(rational = rational)
 
 }
