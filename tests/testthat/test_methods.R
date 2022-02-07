@@ -21,8 +21,10 @@ testthat::test_that("daytime methods work as expected", {
 
   #* Subtraction
 
+    diffs <- c(75, 42, 19, 90)
+
     y <- as_daytime(
-      as.POSIXct(attr(x, "x"), "UTC", format = "%H:%M:%S")
+      as.POSIXct(attr(x, "x"), "UTC", format = "%H:%M:%S") + diffs
     )
 
     testthat::expect_error(y - x, paste0(
@@ -31,7 +33,7 @@ testthat::test_that("daytime methods work as expected", {
     ))
 
     x <- as_daytime(
-      lubridate::force_tz(attr(y, "x"), "EST")
+      as.POSIXct(attr(x, "x"), "EST", format = "%H:%M:%S")
     )
 
     testthat::expect_warning(
@@ -39,10 +41,19 @@ testthat::test_that("daytime methods work as expected", {
       "Performing arithmetic on daytime objects whose timezones differ"
     )
 
+    x <- as_daytime(
+      lubridate::force_tz(attr(x, "x"), lubridate::tz(attr(y, "x")))
+    )
+
+    result <- y - x
+    testthat::expect_s3_class(result, "difftime")
+    testthat::expect_equal(as.numeric(result, "secs"), diffs)
+    testthat::expect_equal(as.numeric(x - y, "secs"), -diffs)
+
   #* c
 
     testthat::expect_equal(
-      c(x, y), rep(c(1439, 1439, 0, 0), 2), ignore_attr = TRUE
+      c(x, y), c(1439, 1439, rep(0, 5), 2), ignore_attr = TRUE
     )
 
     testthat::expect_warning(
