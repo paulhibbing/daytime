@@ -40,25 +40,17 @@ mean.daytime <- function(x, ...) {
 #' @rdname daytime_methods
 #' @export sd.daytime
 #' @export
-sd.daytime <- function(x, ...) {
+sd.daytime <- function(x, units = c("min", "hr"), ...) {
 
-  as_circular(x) %>%
-  ## `daytime` inheritance leads to `Ops` being invoked undesirably...
-  drop_daytime(.) %>%
-  ## ... but `rational` attribute is still needed for `structure_daytime`
+  units <- match.arg(units)
+
+  mean(x) %>%
+  {abs(x - .)} %>%
+  as.numeric(.) %>%
+  pmin(., 1440 - .) %>%
   structure(., rational = attr(x, "rational")) %>%
-  attr_apply(
-    sd, lower = -2*pi, upper = 2*pi,
-    inc_lower = FALSE, inc_upper = FALSE,
-    rational_adjust = FALSE
-  ) %>% ## gives radians (?)
-  {. * (12/pi)} %>% ## convert to hrs
-  drop_circular(FALSE) %>%
-  structure(
-    .,
-    x = drop_circular(attr(., "x"), FALSE, TRUE)
-  ) %>%
-  hr_to_min(.)
+  attr_apply(mean) %>%
+  {switch(units, "min" = ., "hr" = . / 60, NULL)}
 
 }
 
