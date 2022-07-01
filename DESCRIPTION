@@ -1,7 +1,7 @@
 Package: daytime
 Type: Package
 Title: Operate on time variables for physical behavior research
-Version: 0.3.0.9000
+Version: 0.4.0
 Author: Paul R. Hibbing
 Maintainer: Paul R. Hibbing <paulhibbing@gmail.com>
 Description: Crucial functions are to allow conversion of timestamps
