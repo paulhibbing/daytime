@@ -56,7 +56,7 @@ testthat::test_that("`tod` works as expected", {
     ))
 
     testthat::expect_warning(
-      try(tod(circular::circular(t2)), TRUE),
+      try(tod(as_circular(t2)), TRUE),
       "Setting `rational` to TRUE"
     )
 
@@ -66,7 +66,7 @@ testthat::test_that("`tod` works as expected", {
     ))
 
     testthat::expect_warning(
-      try(tod(circular::circular(1300, units = "hours")), TRUE),
+      try(tod(as_circular(1300, units = "hours")), TRUE),
       "Setting `rational` to FALSE"
     )
 

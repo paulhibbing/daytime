@@ -9,13 +9,13 @@ check_rational <- function(rational, x) {
 
     if (rational != attr(x, "rational")) {
 
-      rational <- get_rational(rational, x)
       warning(
         "Conflict detected between attr(x, \"rational\") {",
         attr(x, "rational"), "} and user input {rational = ", rational,
-        "}.\nSetting to ", rational, " based on internal testing.",
-        call. = FALSE
+        "}.\nSetting to ", get_rational(rational, x),
+        " based on internal testing.", call. = FALSE
       )
+      rational <- get_rational(rational, x)
 
     }
 
