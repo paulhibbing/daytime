@@ -10,7 +10,7 @@
 \usage{
 \method{mean}{daytime}(x, ...)
 
-\method{sd}{daytime}(x, units = c("min", "hr"), ...)
+\method{sd}{daytime}(x, units = c("min", "hr"), type = c("MSD", "SRL", "circular"), ...)
 
 sd(x, ...)
 }
@@ -22,6 +22,11 @@ sd(x, ...)
 \item{units}{character scalar specifying the desired units of output for
 \code{sd.daytime}. Can be either \code{"min"} (for minutes) or \code{"hr"}
 (for hours)}
+
+\item{type}{character scalar specifying the method to use for \code{sd}.
+Choose from the mean shorter distance (the default; \code{type = "MSD"}),
+scaled resultant length (\code{type = "SRL"}), or \code{type =
+"circular"} to call \code{circular::sd.circular}}
 }
 \description{
 Methods for class \code{daytime}
@@ -29,7 +34,7 @@ Methods for class \code{daytime}
 \examples{
 
 Time <- as_daytime(
-  Sys.time()+rnorm(100, 12*60*60, 12*60*60), TRUE
+  Sys.time()+rnorm(100, 0, 4*60*60), TRUE
 )
 
 ## Wrap in `as.numeric` for better printing

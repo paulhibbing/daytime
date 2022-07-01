@@ -4,13 +4,17 @@
 #' @param units character scalar specifying the desired units of output for
 #'   \code{sd.daytime}. Can be either \code{"min"} (for minutes) or \code{"hr"}
 #'   (for hours)
+#' @param type character scalar specifying the method to use for \code{sd}.
+#'   Choose from the mean shorter distance (the default; \code{type = "MSD"}),
+#'   scaled resultant length (\code{type = "SRL"}), or \code{type =
+#'   "circular"} to call \code{circular::sd.circular}
 #' @param ... arguments passed to methods
 #'
 #' @export
 #' @examples
 #'
 #' Time <- as_daytime(
-#'   Sys.time()+rnorm(100, 12*60*60, 12*60*60), TRUE
+#'   Sys.time()+rnorm(100, 0, 4*60*60), TRUE
 #' )
 #'
 #' ## Wrap in `as.numeric` for better printing
@@ -43,31 +47,35 @@ mean.daytime <- function(x, ...) {
 #' @rdname daytime_methods
 #' @export sd.daytime
 #' @export
-sd.daytime <- function(x, units = c("min", "hr"), ...) {
+sd.daytime <- function(
+  x, units = c("min", "hr"),
+  type = c("MSD", "SRL", "circular"), ...
+) {
 
   units <- match.arg(units)
+  type <- match.arg(type)
 
-  mean(x) %>%
-  {abs(x - .)} %>%
-  as.numeric(.) %>%
-  pmin(., 1440 - .) %>%
-  structure(., rational = attr(x, "rational")) %>%
-  attr_apply(mean) %>%
-  {switch(units, "min" = ., "hr" = . / 60, NULL)}
+  switch(
+    type,
+    "MSD" = msd(x, units),
+    "SRL" = srl(x, units),
+    "circular" = sd.circular(x, ...),
+    sd.default(x, ...)
+  )
 
 }
 
 #' @export
 mean_sd.daytime <- function(
   x = NULL, MoreArgs = NULL, give_df = TRUE,
-  units = c("min", "hr"), ..., mean_x = NULL, sd_x = NULL
+  units = c("min", "hr"), type = c("MSD", "SRL", "circular"),
+  ..., mean_x = NULL, sd_x = NULL
 ) {
 
   units <- match.arg(units)
 
-  data.frame(mean = mean(x), sd = sd(x)) %>%
+  data.frame(mean = mean(x), sd = sd(x, units, type)) %>%
   within({
-    sd = switch(units, "min" = sd, "hr" = sd / 60, NULL)
     sum_string = paste0(
       tod(mean, attr(mean, "rational")),
       " \u00B1 ", format(sd, ...)
