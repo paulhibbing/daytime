@@ -1,7 +1,10 @@
 #' Methods for class \code{daytime}
 #'
 #' @param x a daytime object
-#' @param ... arguments passed to methods (currently unused)
+#' @param units character scalar specifying the desired units of output for
+#'   \code{sd.daytime}. Can be either \code{"min"} (for minutes) or \code{"hr"}
+#'   (for hours)
+#' @param ... arguments passed to methods
 #'
 #' @export
 #' @examples
