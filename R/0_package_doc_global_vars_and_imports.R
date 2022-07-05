@@ -24,7 +24,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("."))
 #' @importFrom magrittr %>% %T>% %<>%
 NULL
 
-#' @importFrom circular sd sd.circular sd.data.frame sd.default
+#' @importFrom circular sd.circular sd.data.frame
 NULL
 
 #' @importFrom PAutilities mean_sd

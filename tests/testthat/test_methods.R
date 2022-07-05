@@ -17,7 +17,7 @@ testthat::test_that("daytime methods work as expected", {
     )
 
     testthat::expect_equal(tod(m), "23:59:59", ignore_attr = TRUE)
-    testthat::expect_equal(s, 0.701239, ignore_attr = TRUE, tolerance = 0.0001)
+    testthat::expect_equal(s, 0.5, ignore_attr = TRUE, tolerance = 0.0001)
 
   #* Subtraction
 
@@ -26,11 +26,6 @@ testthat::test_that("daytime methods work as expected", {
     y <- as_daytime(
       as.POSIXct(attr(x, "x"), "UTC", format = "%H:%M:%S") + diffs
     )
-
-    testthat::expect_error(y - x, paste0(
-      "`-` only works on daytime objects when both",
-      " operands have a POSIXt `x` attribute"
-    ))
 
     x <- as_daytime(
       as.POSIXct(attr(x, "x"), "EST", format = "%H:%M:%S")
