@@ -1,3 +1,10 @@
+# daytime 0.4.0
+
+* Expanded `sd` calculations to include a variety of options for the desired
+  units and the method of calculation
+* Added a vignette to showcase calculation of descriptive metrics
+* Refined the approach to subtracting `daytime` objects
+
 # daytime 0.3.0
 
 * Added many unit tests

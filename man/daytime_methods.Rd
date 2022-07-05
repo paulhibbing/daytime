@@ -44,6 +44,6 @@ as.numeric(sd(Time))
 ## Compare
 mean(as.numeric(Time))
 sd(as.numeric(Time))
-PAutilities::mean_sd(Time)
+if (!!requireNamespace("PAutilities", quietly = TRUE)) PAutilities::mean_sd(Time)
 
 }
