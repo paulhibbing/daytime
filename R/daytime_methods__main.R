@@ -24,7 +24,7 @@
 #' ## Compare
 #' mean(as.numeric(Time))
 #' sd(as.numeric(Time))
-#' PAutilities::mean_sd(Time)
+#' if (!!requireNamespace("PAutilities", quietly = TRUE)) PAutilities::mean_sd(Time)
 #'
 #' @name daytime_methods
 mean.daytime <- function(x, ...) {

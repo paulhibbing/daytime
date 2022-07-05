@@ -1,0 +1,202 @@
+---
+title: "Descriptive Metrics With `daytime`"
+author: "Paul R. Hibbing"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{daytime_descriptives}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(daytime)
+```
+
+## Introduction
+
+One of the major capabilities of the `daytime` package surrounds calculation of
+meaningful descriptive metrics for circular (i.e., daytime) data. As an
+illustrative scenario, let us assume we have a vector of timestamps, which we
+wish to summarize.
+
+```{r}
+
+timestamps <- c(
+  "10:34:06", "11:53:23", "08:20:46", "12:16:05", "13:02:51",
+  "12:45:48", "10:15:58", "13:58:50", "12:13:54", "12:44:06",
+  "13:10:09", "12:07:28", "14:16:43", "10:26:01", "10:19:23",
+  "10:33:04", "11:14:41", "10:39:40", "09:41:24", "13:35:08",
+  "13:53:38", "11:13:16", "09:08:14", "11:47:55", "13:06:04",
+  "10:01:25", "10:40:07", "09:39:11", "08:54:12", "13:06:01",
+  "09:43:35", "13:00:51", "12:46:27", "12:19:23", "12:17:08",
+  "14:33:06", "12:03:18", "11:33:20", "10:27:35", "12:49:09",
+  "10:41:28", "09:30:26", "10:07:00", "10:52:15", "11:32:56",
+  "10:47:48", "10:42:18", "07:29:19", "10:20:52", "14:31:59",
+  "13:14:41", "09:24:25", "12:40:12", "13:24:54", "11:25:20", 
+  "09:51:33", "12:06:54", "11:00:05", "10:44:36", "13:07:10",
+  "08:27:44", "08:43:09", "10:44:38", "14:29:52", "10:46:13"
+)
+
+
+```
+
+We can obtain a visual summary by converting to a `daytime` object and using the
+associated plot method.
+
+```{r, fig.width=6, fig.height=6, fig.align='center', out.width="85%"}
+
+timestamps <- daytime::as_daytime(
+  timestamps, rational = TRUE, format = "%H:%M:%S"
+)
+
+plot(timestamps)
+
+```
+
+But how do we calculate meaningful summary values of central tendency and spread
+for circular data, akin to familiar metrics of mean and SD for non-circular
+data? That is the topic of this vignette.
+
+## Examining central tendency
+
+The mean is well defined for circular data, and is nicely discussed and
+illustrated in the article by [Cremers & Klugkist
+(2018)](https://www.frontiersin.org/article/10.3389/fpsyg.2018.02040). It is
+determined by finding the "mean direction" of the points on the circle. In
+`daytime`, this is coded intuitively, as follows:
+
+```{r}
+
+mean(timestamps)
+
+```
+
+This shows that the mean is roughly the 687<sup>th</sup> minute of the day. We
+can represent this as a string using the time of day (`tod`) function:
+
+```{r}
+
+daytime::tod(
+  mean(timestamps)
+)
+
+```
+
+Notably, this differs from the result we get when taking the non-circular mean:
+
+```{r}
+
+daytime::tod(
+  mean(
+    as.numeric(timestamps)
+  )
+)
+
+```
+
+Overall, the mean is not too much trouble to work with, and we can see that it
+does a pretty intuitive job of showing central tendency among the data points.
+
+```{r, fig.width=6, fig.height=6, fig.align='center', out.width="85%"}
+
+plot(timestamps)
+
+mean_radians <-
+  as.numeric(mean(timestamps)) /
+  -1440  * ## Fraction of the circle (clockwise)
+  2 * pi + ## Convert to radians
+  (pi / 2) ## Rotate to match the clock
+
+arrows(
+  x0 = 0, y0 = 0,
+  x1 = cos(mean_radians),
+  y1 = sin(mean_radians),
+  col = "#E66100",
+  lwd = 4.5
+)
+
+```
+
+## What about variability?
+
+With circular data, it is harder to capture variability than central tendency.
+Several metrics exist to capture variability, but none are in the original units
+of measurement. We can circumvent this by inventing new metrics, but it is
+important to note that their descriptive value may not correspond to statistical
+utility the way similar metrics (e.g., SD) do for non-circular data.
+
+`daytime` provides several options for looking at variation in the data, and
+this is accomplished using an object-oriented approach to the `sd` function in
+R. When you call `sd` on a `daytime` object, the function `daytime:::sd.daytime`
+is called. This function allows you to specify the desired units ("min" or
+"hr"), and the desired method for calculation. Using the `type` argument, you
+can choose from these three:
+
+* **MSD:** This is the default option, which stands for 'mean shorter distance'.
+Essentially, we want to measure the mean distance between each of the individual
+data points and the overall circular mean. Each of the individual distances can
+be calculated going clockwise or counterclockwise around the circle, and the MSD
+method takes whichever option gives the shorter distance. Thus, the mean
+distance reflects the mean of the 'shorter' individual distances.
+
+* **SRL:** This stands for 'scaled resultant length'. In Section 3.3 of [Cremers &
+Klugkist (2018)](https://www.frontiersin.org/article/10.3389/fpsyg.2018.02040),
+they show that the "mean resultant length" is an indicator of variability. If
+all circular values are identical, there is no variability in the data, and the
+mean resultant length is 1. If data are evenly split on opposite sides of the
+circle, the data are maximally variable, and the mean resultant length is 0. The
+idea of the SRL metric is, by straightforward scaling, to map this range of
+variabilities (from 0 to 1) onto the equivalent range in units of measure (0 to
+12 hours, or 0 to 770 minutes).
+
+* **circular:** This method simply invokes the `sd` method for circular data,
+based on code in the `circular` package. For more information, see
+`?circular::sd.circular`.
+
+```{r}
+
+sd(timestamps, units = "hr", type = "MSD")
+sd(timestamps, units = "min", type = "MSD")
+
+sd(timestamps, units = "hr", type = "SRL")
+sd(timestamps, units = "min", type = "SRL")
+
+## `units` argument is not relevant for the circular method
+sd(timestamps, type = "circular")
+
+```
+
+## Examining mean and variability together
+
+Through the `PAutilities` package, we can summarize mean and variability together, as follows:
+
+```{r}
+
+## Only run the below code if the PAutilities package is installed
+if (!!requireNamespace("PAutilities", quietly = TRUE)) {
+  
+  PAutilities::mean_sd(
+    timestamps, units = "hr", method = "SRL",
+    digits = 1, nsmall = 1
+  )
+  
+  PAutilities::mean_sd(
+    timestamps, units = "min", method = "MSD",
+    give_df = FALSE, digits = 1, nsmall = 1
+  )
+  
+}
+
+```
+
+## Conclusion
+
+In this vignette, we have discussed how to calculate descriptive metrics for
+circular (i.e., `daytime`) data. Although the descriptive value is not
+necessarily coupled with statistical value the way it is for non-circular data,
+these features of the `daytime` package are nevertheless valuable for adding
+context to investigations of circular data.

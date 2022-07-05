@@ -14,11 +14,14 @@ Imports:
     circular,
     lubridate,
     magrittr,
-    PAutilities,
     stats
 Remotes:
     paulhibbing/PAutilities
 RoxygenNote: 7.1.2
 Suggests: 
+    rmarkdown,
+    knitr,
+    PAutilities,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+VignetteBuilder: knitr
