@@ -126,8 +126,8 @@ arrows(
 With circular data, it is harder to capture variability than central tendency.
 Several metrics exist to capture variability, but none are in the original units
 of measurement. We can circumvent this by inventing new metrics, but it is
-important to note that their descriptive value may not correspond to statistical
-utility the way similar metrics (e.g., SD) do for non-circular data.
+important to note that their descriptive utility may not correspond to
+statistical utility the way similar metrics (e.g., SD) do for non-circular data.
 
 `daytime` provides several options for looking at variation in the data, and
 this is accomplished using an object-oriented approach to the `sd` function in
@@ -160,12 +160,16 @@ based on code in the `circular` package. For more information, see
 ```{r}
 
 sd(timestamps, units = "hr", type = "MSD")
+
 sd(timestamps, units = "min", type = "MSD")
 
+
 sd(timestamps, units = "hr", type = "SRL")
+
 sd(timestamps, units = "min", type = "SRL")
 
-## `units` argument is not relevant for the circular method
+
+## `units` argument is not relevant for the `circular` method
 sd(timestamps, type = "circular")
 
 ```
@@ -176,13 +180,20 @@ Through the `PAutilities` package, we can summarize mean and variability togethe
 
 ```{r}
 
-## Only run the below code if the PAutilities package is installed
+## The below code will only run if the PAutilities package is installed
 if (!!requireNamespace("PAutilities", quietly = TRUE)) {
   
   PAutilities::mean_sd(
     timestamps, units = "hr", method = "SRL",
     digits = 1, nsmall = 1
   )
+  
+}
+
+
+
+## The below code will only run if the PAutilities package is installed
+if (!!requireNamespace("PAutilities", quietly = TRUE)) {
   
   PAutilities::mean_sd(
     timestamps, units = "min", method = "MSD",
@@ -196,7 +207,7 @@ if (!!requireNamespace("PAutilities", quietly = TRUE)) {
 ## Conclusion
 
 In this vignette, we have discussed how to calculate descriptive metrics for
-circular (i.e., `daytime`) data. Although the descriptive value is not
-necessarily coupled with statistical value the way it is for non-circular data,
-these features of the `daytime` package are nevertheless valuable for adding
-context to investigations of circular data.
+circular (i.e., `daytime`) data. Although the descriptive utility is not
+necessarily coupled with statistical utility the way it is for non-circular
+data, these features of the `daytime` package are nevertheless valuable for
+adding context to investigations of circular data.
