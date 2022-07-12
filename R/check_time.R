@@ -7,6 +7,16 @@ check_time <- function(x, ...) {
 # Methods -----------------------------------------------------------------
 
 #' @export
+check_time.daytime <- function(x, ...) {
+  if (!is.daytime(x)) warning(
+    "Passing `x` through `check_time.daytime` even though it is",
+    " not a true\ndaytime object (is it missing `rational`",
+    " and/or `x` attributes?)", call. = FALSE
+  )
+  x
+}
+
+#' @export
 check_time.POSIXt <- function(x, ...) {
   x
 }

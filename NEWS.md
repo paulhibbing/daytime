@@ -1,3 +1,7 @@
+# daytime 0.4.2
+
+* Added a `daytime` method for `check_time` (should enhance `tod`)
+
 # daytime 0.4.1
 
 * Fixed a bug related to handling `NA` values in range checks
