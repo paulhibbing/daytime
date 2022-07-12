@@ -44,7 +44,7 @@ testthat::test_that("range testing works as expected", {
         rational_adjust = FALSE
       ),
       paste0(
-        "Detected 3 element\\(s) of `x` that fall",
+        "Detected 3 non-missing element\\(s) of `x` that fall",
         " outside the expected range of \\[0, 1440)"
       )
     )
@@ -56,7 +56,7 @@ testthat::test_that("range testing works as expected", {
         rational_adjust = FALSE
       ),
       paste0(
-        "Detected 3 element\\(s) of `x` that fall",
+        "Detected 3 non-missing element\\(s) of `x` that fall",
         " outside the expected range of \\(0, 1440]"
       )
     )
@@ -106,7 +106,7 @@ testthat::test_that("range testing works as expected", {
 
     testthat::expect_error(
       range_test(1450, 2000, 2500, TRUE, FALSE, FALSE),
-      "^Detected 1 element\\(s) of `x`.*of \\[2000, 2500).$"
+      "^Detected 1 non-missing element\\(s) of `x`.*of \\[2000, 2500).$"
     )
 
 })

@@ -11,7 +11,7 @@ testthat::test_that("`structure_daytime` works as expected", {
       structure_daytime(Sys.time(), as.character(Sys.time())),
       "Setting `rational` to FALSE"
     ),
-    "^Detected 1 element\\(s) of `x`.*\\[0, 1439]\\.$"
+    "^Detected 1 non-missing element\\(s) of `x`.*\\[0, 1439]\\.$"
   )
 
   testthat::expect_error(
@@ -23,7 +23,7 @@ testthat::test_that("`structure_daytime` works as expected", {
       ),
       "^Conflict detected.*Setting to FALSE based on internal testing.$"
     ),
-    "^Detected 1 element\\(s) of `x`.*\\[0, 1439]\\.$"
+    "^Detected 1 non-missing element\\(s) of `x`.*\\[0, 1439]\\.$"
   )
 
   testthat::expect_warning(

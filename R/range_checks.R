@@ -108,12 +108,12 @@ range_test <- function(
       stats::na.omit(x) %>%
       range_examine(lower, upper, inc_lower, inc_upper, FALSE)
 
-    if (any(!values_in_range)) {
+    if (FALSE %in% values_in_range) {
 
       stop(
-        "Detected ", sum(!values_in_range), " element(s) of `x` that",
-        " fall outside the expected range of ", range_label,  ".",
-        call. = FALSE
+        "Detected ", sum(values_in_range %in% FALSE), " non-missing",
+        " element(s) of `x` that fall outside the expected range of ",
+        range_label,  ".", call. = FALSE
       )
 
     }

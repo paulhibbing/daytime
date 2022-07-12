@@ -1,3 +1,7 @@
+# daytime 0.4.1
+
+* Fixed a bug related to handling `NA` values in range checks
+
 # daytime 0.4.0
 
 * Expanded `sd` calculations to include a variety of options for the desired
